@@ -1,0 +1,138 @@
+---
+title: "Final Exam ADD"
+author: "Rania Prastyka"
+date: "2023-12-19"
+output: html_document
+---
+
+```{r}
+dataset_uas <- read_excel("D:/dataset_uas.xlsx")
+```
+```{r}
+View(dataset_uas)
+```
+```{r}
+summary(dataset_uas)
+```
+#Menambah variable independen jumlah fasilitas kesehatan jiwa yang mempengaruhi jumlah layanan kesehatan untuk masing-masing jenis kegiatan
+```{r}
+dataset_uas$jumlah_fasilitas_kesehatan_jiwa <- c(5, 8, 12, 6, 10, 15, 7, 9, 11, 8, 14, 20, 22, 9, 6, 16, 25, 12, 7, 8, 13, 15, 10)
+View(dataset_uas)
+```
+#menampilakan summary baru untuk dataset_uas setelah ditambahkan variable baru
+```{r}
+summary(dataset_uas)
+```
+##Membuat scatter plot untuk melihat hubungan antara jumlah fasilitas kesehatan jiwa dengan jumlah layanan kesehatan yang dilakukan
+```{r}
+plot(dataset_uas$jumlah_fasilitas_kesehatan_jiwa, dataset_uas$psikotest, type='p', col='blue')
+plot(dataset_uas$jumlah_fasilitas_kesehatan_jiwa, dataset_uas$konsultasi, type='p', col='blue')
+plot(dataset_uas$jumlah_fasilitas_kesehatan_jiwa, dataset_uas$elektromedik, type='p', col='blue')
+plot(dataset_uas$jumlah_fasilitas_kesehatan_jiwa, dataset_uas$psikoterapy, type='p', col='blue')
+plot(dataset_uas$jumlah_fasilitas_kesehatan_jiwa, dataset_uas$play_therapy, type='p', col='blue')
+```
+#Mencari korelasi variabel jumlah fasilitas kesehatan jiwa dengan jumlah layanan yang dilakukan
+```{r}
+selected_cols <- c("jumlah_fasilitas_kesehatan_jiwa", "psikotest", "konsultasi", "elektromedik", "psikoterapy", "play_therapy")
+cor_fasilitas <- cor(dataset_uas[, selected_cols])
+cor_fasilitas
+```
+```{r}
+library(corrplot)
+corrplot(cor_fasilitas,method='color')
+corrplot(cor_fasilitas,method='number', number.digits=2)
+corrplot(cor_fasilitas,method='number', number.digits=2, bg='green')
+```
+```{r}
+model <- lm(`jumlah_fasilitas_kesehatan_jiwa` ~ `psikotest`+ `konsultasi`+ `elektromedik`+ `psikoterapy` + `play_therapy`,  data = dataset_uas)
+summary(model)
+```
+```{r}
+model_1 <- lm(`jumlah_fasilitas_kesehatan_jiwa` ~ `psikotest`, data=dataset_uas)
+summary(model_1)
+```
+```{r}
+plot(model_1$residuals ~ dataset_uas$`psikotest`)
+abline(h = 0, lty =3)
+qqnorm(model_1$residuals)
+qqline(model_1$residuals)
+```
+```{r}
+model_2 <- lm(`jumlah_fasilitas_kesehatan_jiwa` ~ `konsultasi`, data=dataset_uas)
+summary(model_2)
+```
+```{r}
+plot(model_2$residuals ~ dataset_uas$`konsultasi`)
+abline(h = 0, lty =3)
+qqnorm(model_2$residuals)
+qqline(model_2$residuals)
+```
+```{r}
+model_3 <- lm(`jumlah_fasilitas_kesehatan_jiwa` ~ `elektromedik`, data=dataset_uas)
+summary(model_3)
+```
+```{r}
+plot(model_3$residuals ~ dataset_uas$`elektromedik`)
+abline(h = 0, lty =3)
+qqnorm(model_3$residuals)
+qqline(model_3$residuals)
+```
+```{r}
+model_4 <- lm(`jumlah_fasilitas_kesehatan_jiwa` ~ `psikoterapy`, data=dataset_uas)
+summary(model_3)
+```
+```{r}
+plot(model_4$residuals ~ dataset_uas$`psikoterapy`)
+abline(h = 0, lty =3)
+qqnorm(model_4$residuals)
+qqline(model_4$residuals)
+```
+```{r}
+model_5 <- lm(`jumlah_fasilitas_kesehatan_jiwa` ~ `play_therapy`, data=dataset_uas)
+summary(model_3)
+```
+```{r}
+plot(model_5$residuals ~ dataset_uas$`play_therapy`)
+abline(h = 0, lty =3)
+qqnorm(model_5$residuals)
+qqline(model_5$residuals)
+```
+```{r}
+correlation <- cor(dataset_uas$`jumlah_fasilitas_kesehatan_jiwa`, dataset_uas$`psikotest`)
+```
+
+#Mencari Outliers
+```{r}
+z_scores_psikotest <- scale(dataset_uas$psikotest)
+```
+```{r}
+outliers_psikotest <- which(abs(z_scores_psikotest) > 2)
+```
+```{r}
+dataset_uas[outliers_psikotest, ]
+```
+```{r}
+# Hitung IQR untuk variabel psikotest
+Q1_psikotest <- quantile(dataset_uas$psikotest, 0.25)
+Q3_psikotest <- quantile(dataset_uas$psikotest, 0.75)
+IQR_psikotest <- Q3_psikotest - Q1_psikotest
+```
+```{r}
+# Tentukan batas bawah dan batas atas untuk outlier
+lower_bound_psikotest <- Q1_psikotest - 1.5 * IQR_psikotest
+upper_bound_psikotest <- Q3_psikotest + 1.5 * IQR_psikotest
+```
+```{r}
+# Identifikasi outlier pada variabel psikotest
+outliers_psikotest <- which(dataset_uas$psikotest < lower_bound_psikotest | dataset_uas$psikotest > upper_bound_psikotest)
+
+# Tampilkan observasi yang dianggap sebagai outlier pada variabel psikotest
+dataset_uas[outliers_psikotest, ]
+```
+
+
+
+
+
+
+
